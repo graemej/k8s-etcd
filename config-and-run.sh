@@ -13,6 +13,7 @@ function envValue() {
  echo `getValue $entry`
 }
 
+export
 set -ex
 PEERS=""
 
@@ -28,8 +29,10 @@ if [ ! -z "$SERVER_ID" ] ; then
     PEER_PORT=`envValue ETCD_PEER_${i}_SERVICE_PORT`
 
     if [ "$SERVER_ID" = "$i" ] ; then
-      export ETCD_ADDR="${CLIENT_HOST}:${CLIENT_PORT}"
-      export ETCD_PEER_ADDR="${PEER_HOST}:${PEER_PORT}"
+      export ETCD_ADDR=${CLIENT_HOST}:${CLIENT_PORT}
+      export ETCD_BIND_ADDR=0.0.0.0:4001
+      export ETCD_PEER_ADDR=${PEER_HOST}:${PEER_PORT}
+      export ETCD_PEER_BIND_ADDR=0.0.0.0:7001
     elif [ -z "$PEER_HOST" ] || [ -z "$PEER_PORT" ] || [ -z "$CLIENT_HOST" ] || [ -z "$CLIENT_PORT" ] ; then
       break
     else
@@ -40,6 +43,11 @@ if [ ! -z "$SERVER_ID" ] ; then
     fi
 
   done
+fi
+
+# the first node in the cluster should have an empty peer list
+if [ "$ETCD_SERVER_ID" = "1" ] ; then
+  export ETCD_PEERS=""
 fi
 
 if [ -z "$ETCD_NAME" ] ; then
