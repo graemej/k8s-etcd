@@ -4,13 +4,10 @@ FROM ubuntu:trusty
 
 MAINTAINER Graeme Johnson <graeme@johnson-family.ca>
 
-ENV DEBIAN_FRONTEND noninteractive
-
 RUN \
  sed 's/main$/main universe/' -i /etc/apt/sources.list && \
- env DEBIAN_FRONTEND=noninteractive apt-get update && \
- env DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common python-software-properties && \
- env DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+ apt-get update && \
+ env DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common python-software-properties curl
 
 RUN \
  cd /tmp && \
